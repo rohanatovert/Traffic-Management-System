@@ -1,2 +1,2 @@
 # Traffic-Management-System
-Can detect Lane ,Helmet, Red-Light, Speed violations.
+Can detect number plates,  Lane ,Helmet, Red-Light, Speed violations.
