@@ -1,0 +1,34 @@
+a:active{
+    background:rgb(190, 13, 13) !important;
+}
+a:focus{
+    background:rgb(190, 13, 13) !important;
+}
+
+#scrollMe{
+        margin:5px;
+        padding:5px;
+        background-color: green;
+        width: 500px;
+        height: 500px;
+        overflow: auto;
+        text-align:justify;
+
+}
+
+#crops{
+    margin:5px;
+    padding:5px;
+    background-color: green;
+    width: 500px;
+    height: 500px;
+    text-align:justify;
+}
+
+.row{
+    text-align: center;
+}
+
+.col{
+    border-right:1px #000000;
+}

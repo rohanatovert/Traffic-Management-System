@@ -1,0 +1,240 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
+    
+    <!-- <script src="{{ url_for('static', filename='js/fs.js') }}"></script> -->
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+
+    <title>Hello, world!</title>
+  </head>
+  <body class="bg-dark">
+    
+
+    <div class="container-fluid bg-light p-4">
+        <div class="row d-flex">
+          <div class="col p-3 flex-grow-0">
+            <div class="row">
+                <h2>Menu</h2>
+            </div>
+            <br/>
+            <br/>
+            <br/>
+            <form method="POST">
+              <div class="row">
+                  <a value = "rlvd" OnClick="btnPressed('rlvd',this)" href="#" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Red Light Violation</a>
+              </div>
+              <br/>
+              <div class="row">
+                  <a value = "speed" OnClick="btnPressed('speed',this)" href="#" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Speed Violation</a>
+              </div>
+              <br/>
+              <div class="row">
+                  <a value = "helmet" OnClick="btnPressed('helmet',this)" href="#" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Helmet Violation</a>
+              </div>
+              <br/>
+              <div class="row">
+                  <a value = "lane" OnClick="btnPressed('lane',this)" href="#" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">Lane Violation</a>
+              </div>
+              <br/>
+              <div class="row">
+                  <a value = "anpr" OnClick="btnPressed('anpr',this)" href="#" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">ANPR</a>
+              </div>
+            </form>
+            <br/>
+          </div>
+          <div class="col p-3 flex-grow-2">
+            <div class="row">
+                <h2>Video</h2>
+            </div>
+            <br/>
+            <br/>
+            <br/>
+            <div class="row">
+          
+                <video controls id="video-tag">
+                    <source id="video-source" src="">
+                    Your browser does not support the video tag.
+                </video>
+                <form method="POST" enctype="multipart/form-data">
+                  <br/>
+                  <input class="form-control" type="file" id="input-tag" name = "file"></input>
+                  <br/>
+                  <input class="form-control btn btn-success " type="submit" value = "Start" id="submit-btn" name = ""></input>
+                </form>
+            </div>
+           
+            
+            
+          </div>
+          <div class="col p-3 flex-grow-1">
+            <div class="row">
+                <h2>Violations</h2>
+            </div>
+            <br/>
+            <br/>
+            <br/>
+            <div class="row d-flex">
+                <div class="col">
+                  <div class="row">
+                    <img id="img1" src="{{ url_for('static', filename='img/crops/crop.jpg') }}"></img>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="row" id="scrollMe">
+                    <img id="img2" src="{{ url_for('static', filename='img/plates/plate.jpg') }}"></img>
+                  </div>
+                </div>
+            </div>
+          </div>
+        </div>
+            
+            
+            <br/>
+            <br/>
+            <!-- <div class="progress">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+            </div> -->
+            <div class="col">
+              <div class="row">
+                <h2>Output Video</h2>
+                <img id="output_vid" src="{{ url_for('static', filename='img/ouput.jpg') }}"></img>
+              </div>
+            </div>
+            
+
+    </div>
+
+    
+
+    <!-- Optional JavaScript; choose one of the two! -->
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <!-- Option 2: Separate Popper and Bootstrap JS -->
+    <!--
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+    -->
+    <script>
+        const videoSrc = document.querySelector("#video-source");
+        const videoTag = document.querySelector("#video-tag");
+        const inputTag = document.querySelector("#input-tag");
+        var image_list = []
+        
+        
+
+
+        inputTag.addEventListener('change',  readVideo)
+
+        function readVideo(event) {
+        console.log(event.target.files)
+        if (event.target.files && event.target.files[0]) {
+            var reader = new FileReader();
+            
+            reader.onload = function(e) {
+            console.log('loaded')
+            filename=e.target.result
+            videoSrc.src = filename
+            videoTag.load()
+            }.bind(this)
+
+            reader.readAsDataURL(event.target.files[0]);
+        }
+        }
+
+        
+        function btnPressed(operation, sender){
+            var btn = document.getElementById("submit-btn");
+            btn.name = operation;
+        }
+        
+        var image1 = document.getElementById("img1");
+        var output = document.getElementById("output_vid");
+        var image_div = document.getElementById("scrollMe");
+        
+        
+
+        socket = io();
+        socket.connect('http://127.0.0.1:5000/');
+        socket.on('connect', function(){
+          socket.send('a');
+          console.log("Connected");
+        });
+        socket.on('message', function(list_of_images){
+          var no_of_images_already = image_div.children.length;
+          var list_of_src_already = [];
+          var images_already = image_div.children;
+          for(var i=0; i< no_of_images_already; i++) {  
+            image_name = images_already[i].src.replace(/^.*[\\\/]/, '');
+            list_of_src_already.push(image_name)
+            }
+          var new_list_of_images = [];
+          for(var i=0; i< list_of_images.length; i++) {
+            image_name = list_of_images[i].replace(/^.*[\\\/]/, '');
+            // console.log(image_name,list_of_src_already, list_of_src_already.includes(image_name));
+            if (!(list_of_src_already.includes(image_name))){
+              new_list_of_images.push(list_of_images[i])
+              var img = new Image();
+              img.src = list_of_images.at(-1);
+              image_div.insertBefore(img,image_div.firstChild);
+            }
+            }
+          image1.src = "{{ url_for('static', filename='img/crops/crop.jpg') }}";
+          output.src = "{{ url_for('static', filename='img/output.jpg') }}";
+          // console.log(no_of_images_already,list_of_images.length);
+          // if (no_of_images_already!=list_of_images.length){
+          //   // image_div.innerHTML = "";
+          //   var img = new Image();
+          //   img.src = list_of_images.at(-1);
+          //   image_div.insertBefore(img,image_div.firstChild);
+          //   }
+          socket.send('a');
+        })
+
+        // var fs = require("{{ url_for('static', filename='js/fs.js') }}");
+        
+        // var files = fs.readdir('Home-GUI/static/img/plates/');
+        // window.onload = function() {
+        //   
+        //   
+
+        //   function updateImage() {
+          
+        //       image1.src = "{{ url_for('static', filename='img/crops/crop.jpg') }}";
+        //       // image2.src = "{{ url_for('static', filename='img/plate.jpg') }}";
+        //       var no_of_images_already = image_div.children.length;
+
+              
+        //       for(var i=0; i< files.length; i++) 
+        //       {       
+        //             image_list.append(filename.replace("Home-GUI",""))
+        //       }
+        //       // list_of_images = {{ image_list | safe }};
+        //       console.log(no_of_images_already,list_of_images.length)
+        //       if (no_of_images_already!=list_of_images.length){
+        //         image_div.innerHTML = "";
+        //         for(var i=0; i< list_of_images.length; i++) {  
+        //           var img = new Image();
+        //           img.src = list_of_images[i];
+        //           image_div.appendChild(img);
+        //       }
+        //       }
+              
+        //   }
+
+        //   setInterval(updateImage, 1000);
+        // };     
+        
+      
+    </script>
+  
+  </body>
+</html>
